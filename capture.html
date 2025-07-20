@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Virtual Eyewear Try-On | Capture</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: radial-gradient(circle at center, #0f2027, #203a43, #2c5364);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Floating particles for futuristic vibe */
+    .particle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: rgba(0, 255, 213, 0.5);
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(0, 255, 213, 0.8);
+      animation: float 10s infinite alternate ease-in-out;
+    }
+
+    .particle:nth-child(1) { top: 15%; left: 12%; animation-duration: 11s; }
+    .particle:nth-child(2) { top: 60%; left: 80%; animation-duration: 14s; }
+    .particle:nth-child(3) { top: 75%; left: 30%; animation-duration: 13s; }
+    .particle:nth-child(4) { top: 40%; left: 60%; animation-duration: 15s; }
+
+    @keyframes float {
+      0% { transform: translateY(0px) translateX(0px); opacity: 0.7; }
+      50% { transform: translateY(-30px) translateX(20px); opacity: 1; }
+      100% { transform: translateY(30px) translateX(-20px); opacity: 0.5; }
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #00ffd5;
+      margin-bottom: 30px;
+      text-shadow: 0 0 15px #00ffd5, 0 0 30px #00c6ff;
+      animation: glowText 3s infinite alternate ease-in-out;
+    }
+
+    @keyframes glowText {
+      0% { text-shadow: 0 0 15px #00ffd5, 0 0 30px #00c6ff; }
+      100% { text-shadow: 0 0 30px #00c6ff, 0 0 60px #00ffd5; }
+    }
+
+    .video-container {
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4px dashed #00ffd5;
+      width: 480px;
+      height: 480px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 30px rgba(0, 255, 213, 0.4);
+      animation: rotateBorder 8s linear infinite, floatCam 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes rotateBorder {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes floatCam {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-10px); }
+    }
+
+    video, canvas {
+      width: 480px;
+      height: 480px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    button {
+      margin-top: 30px;
+      background: linear-gradient(90deg, #00ffd5, #00c6ff);
+      color: #000;
+      border: none;
+      padding: 16px 36px;
+      border-radius: 30px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 20px rgba(0, 255, 213, 0.5);
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #00e3b9, #009fdc);
+      transform: scale(1.08);
+      box-shadow: 0 0 35px rgba(0, 255, 213, 0.7);
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 15px rgba(0, 255, 213, 0.4); }
+      50% { box-shadow: 0 0 35px rgba(0, 255, 213, 0.8); }
+      100% { box-shadow: 0 0 15px rgba(0, 255, 213, 0.4); }
+    }
+
+    #error {
+      color: #ff4d4d;
+      margin-top: 20px;
+      font-size: 16px;
+      text-shadow: 0 0 5px rgba(255, 77, 77, 0.6);
+    }
+
+    @media (max-width: 768px) {
+      .video-container, video, canvas {
+        width: 300px;
+        height: 300px;
+      }
+      h1 { font-size: 1.8rem; }
+      button { padding: 12px 24px; font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Background Particles -->
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+
+  <h1>Capture Your Look</h1>
+
+  <div class="video-container">
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas" style="display: none;"></canvas>
+  </div>
+
+  <button id="captureBtn">📸 Capture & Try Glasses</button>
+  <div id="error"></div>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const captureBtn = document.getElementById('captureBtn');
+    const errorDiv = document.getElementById('error');
+
+    navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } })
+      .then(stream => {
+        video.srcObject = stream;
+      })
+      .catch(() => {
+        errorDiv.innerText = "Unable to access webcam. Please allow camera permissions.";
+      });
+
+    captureBtn.addEventListener('click', () => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob(blob => {
+        const formData = new FormData();
+        formData.append('photo', blob, 'captured.jpg');
+
+        fetch('/upload', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => {
+          if (response.redirected) {
+            window.location.href = response.url;
+          } else {
+            return response.text().then(text => {
+              errorDiv.innerText = text;
+            });
+          }
+        })
+        .catch(() => {
+          errorDiv.innerText = "Failed to upload image.";
+        });
+      }, 'image/jpeg');
+    });
+  </script>
+
+</body>
+</html>
