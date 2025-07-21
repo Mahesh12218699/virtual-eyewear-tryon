@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Virtual Eyewear Try-On</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at center, #0f2027, #203a43, #2c5364);
+      font-family: 'Poppins', sans-serif;
+      color: #ffffff;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Floating animated particles */
+    .particle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: rgba(0, 255, 213, 0.5);
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(0, 255, 213, 0.8);
+      animation: float 10s infinite alternate ease-in-out;
+    }
+
+    .particle:nth-child(1) {
+      top: 20%; left: 10%;
+      animation-duration: 12s;
+    }
+    .particle:nth-child(2) {
+      top: 70%; left: 80%;
+      animation-duration: 14s;
+    }
+    .particle:nth-child(3) {
+      top: 50%; left: 50%;
+      animation-duration: 11s;
+    }
+    .particle:nth-child(4) {
+      top: 80%; left: 20%;
+      animation-duration: 15s;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px) translateX(0px); opacity: 0.7; }
+      50% { transform: translateY(-30px) translateX(20px); opacity: 1; }
+      100% { transform: translateY(30px) translateX(-20px); opacity: 0.5; }
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      margin-bottom: 50px;
+      color: #00ffd5;
+      text-shadow: 0 0 15px #00ffd5, 0 0 30px #00c6ff;
+      animation: glowText 3s infinite alternate ease-in-out;
+    }
+
+    @keyframes glowText {
+      0% { text-shadow: 0 0 15px #00ffd5, 0 0 30px #00c6ff; }
+      100% { text-shadow: 0 0 30px #00c6ff, 0 0 60px #00ffd5; }
+    }
+
+    .frame-gallery {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 50px;
+      animation: fadeInUp 1.5s ease-in-out forwards;
+    }
+
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .frame {
+      width: 160px;
+      height: auto;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      overflow: hidden;
+      padding: 10px;
+      box-shadow: 0 0 20px rgba(0, 255, 213, 0.2);
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+      cursor: pointer;
+      animation: floatFrames 5s infinite ease-in-out alternate;
+    }
+
+    .frame:hover {
+      transform: scale(1.15) rotateY(15deg);
+      box-shadow: 0 0 30px rgba(0, 255, 213, 0.6), 0 0 50px rgba(0, 198, 255, 0.4);
+    }
+
+    @keyframes floatFrames {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-10px); }
+    }
+
+    .btn-start {
+      padding: 18px 40px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      background: linear-gradient(90deg, #00ffd5, #00c6ff);
+      border: none;
+      border-radius: 30px;
+      color: #000;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(0, 255, 213, 0.5);
+      transition: all 0.3s ease;
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    .btn-start:hover {
+      background: linear-gradient(90deg, #00e3b9, #009fdc);
+      transform: scale(1.08);
+      box-shadow: 0 0 35px rgba(0, 255, 213, 0.7);
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 15px rgba(0, 255, 213, 0.4); }
+      50% { box-shadow: 0 0 35px rgba(0, 255, 213, 0.8); }
+      100% { box-shadow: 0 0 15px rgba(0, 255, 213, 0.4); }
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .frame {
+        width: 120px;
+      }
+
+      .btn-start {
+        padding: 14px 28px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated Particles -->
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+
+  <h1>Virtual Eyewear Try-On</h1>
+
+  <div class="frame-gallery">
+    <img class="frame" src="/static/frames/full_rim1.png" alt="Full Rim">
+    <img class="frame" src="/static/frames/gold_round.jpg" alt="Gold Round">
+    <img class="frame" src="/static/frames/aviator_silver.jpg" alt="Silver Aviator">
+  </div>
+
+  <a href="/capture">
+    <button class="btn-start">Start Try-On</button>
+  </a>
+</body>
+</html>
